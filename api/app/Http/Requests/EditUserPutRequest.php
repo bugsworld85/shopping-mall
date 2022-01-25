@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterPostRequest extends FormRequest
+class EditUserPutRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +13,7 @@ class RegisterPostRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,8 +23,8 @@ class RegisterPostRequest extends FormRequest
      */
     public function rules()
     {
-        return array_merge(User::RULES, [
-            'store_name' => 'required|max:191|unique:shops,name'
-        ]);
+        return [
+            //
+        ];
     }
 }

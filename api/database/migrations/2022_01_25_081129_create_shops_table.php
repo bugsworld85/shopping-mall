@@ -16,7 +16,7 @@ class CreateShopsTable extends Migration
         Schema::create('shops', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('logo');
+            $table->text('logo')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

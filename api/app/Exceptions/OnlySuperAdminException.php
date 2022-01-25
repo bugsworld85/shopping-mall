@@ -5,7 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserNotVerifiedException extends Exception
+class OnlySuperAdminException extends Exception
 {
     /**
      * Render the exception into an HTTP response.
@@ -16,7 +16,7 @@ class UserNotVerifiedException extends Exception
     public function render($request)
     {
         return response()->json([
-            'message' => __("user.login.unverified"),
-        ], 422);
+            'message' => __("exception.only.super_admin"),
+        ], 403);
     }
 }

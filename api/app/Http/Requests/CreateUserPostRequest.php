@@ -5,18 +5,8 @@ namespace App\Http\Requests;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterPostRequest extends FormRequest
+class CreateUserPostRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -25,7 +15,8 @@ class RegisterPostRequest extends FormRequest
     public function rules()
     {
         return array_merge(User::RULES, [
-            'store_name' => 'required|max:191|unique:shops,name'
+            'shop_id' => 'required|exists:shops,id',
+            'role_id' => 'required|exists:users,id',
         ]);
     }
 }

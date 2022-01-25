@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\RoleAssignment;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, RoleAssignment;
 
     /**
      * Had to do this for easy access.
@@ -78,5 +79,17 @@ class User extends Authenticatable
             'id',
             'role_id'
         );
+    }
+
+    public function userRoles()
+    {
+        return $this->hasMany(RoleUser::class)
+            ->addSelect([
+                'role_users.*',
+                'roles.code AS role_code',
+                'shops.name AS shop_name',
+            ])
+            ->leftJoin('roles', 'roles.id', '=', 'role_users.role_id')
+            ->leftJoin('shops', 'shops.id', '=', 'role_users.shop_id');
     }
 }
