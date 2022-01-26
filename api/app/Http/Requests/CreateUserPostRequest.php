@@ -15,8 +15,7 @@ class CreateUserPostRequest extends FormRequest
     public function rules()
     {
         return array_merge(User::RULES, [
-            'shop_id' => 'required|exists:shops,id',
-            'role_id' => 'required|exists:users,id',
+            'role' => 'required|exists:roles,name',
         ]);
     }
 }

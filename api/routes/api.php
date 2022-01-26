@@ -35,7 +35,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::group(['middleware' => ['allowed.role:super_admin']], function () {
             Route::get('users', [UserController::class, 'index'])->name('users');
             Route::post('user/create', [UserController::class, 'create'])->name('user.create');
-            Route::post('user/{user}', [UserController::class, 'edit'])->name('user.edit');
+            Route::get('user/{user}', [UserController::class, 'view'])->name('user.view');
+            Route::put('user/{user}', [UserController::class, 'edit'])->name('user.edit');
+            Route::delete('user/{user}', [UserController::class, 'delete'])->name('user.delete');
         });
 
         Route::group(['middleware' => ['allowed.role:super_admin,mall_manager']], function () {

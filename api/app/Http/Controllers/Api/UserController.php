@@ -23,12 +23,20 @@ class UserController extends Controller
         return DefaultResource::collection($users);
     }
 
+    public function view(User $user)
+    {
+        $user->load(['shops', 'roles']);
+        return new DefaultResource($user);
+    }
+
     public function create(CreateUserPostRequest $request)
     {
         $user = new User($request->only([
             'first_name', 'last_name', 'email', 'password'
         ]));
         $user->save();
+
+        $user->assignRole($request->input('role'));
 
         return (new DefaultResource($user))->additional([
             'message' => __('user.register.success')
@@ -37,11 +45,23 @@ class UserController extends Controller
 
     public function edit(EditUserPutRequest $request, User $user)
     {
-        $user->first_name = $request->input('first_name');
-        $user->last_name = $request->input('last_name');
-        $user->email = $request->input('email');
-        $user->password = $request->input('password');
+        if ($request->input('first_name')) {
+            $user->first_name = $request->input('first_name');
+        }
+        if ($request->input('last_name')) {
+            $user->last_name = $request->input('last_name');
+        }
+        if ($request->has('email')) {
+            $user->email = $request->input('email');
+        }
+        if ($request->has('password')) {
+            $user->password = $request->input('password');
+        }
         $user->save();
+
+        if ($request->has('role') && !$user->hasRole($request->input('role'))) {
+            $user->assignRole($request->input('role'));
+        }
 
         return (new DefaultResource($user))->additional([
             'message' => __('user.edit.success')

@@ -43,7 +43,7 @@ class ShopController extends Controller
 
     public function visitsPerShopReport(WithDateRangeRequest $request)
     {
-        $perShopVisitsReport = Shop::GetVisitsPerShop($request)
+        $perShopVisitsReport = Shop::getVisitsPerShop($request)
             ->orderByVisits($request->has('direction') ? $request->input('direction') : 'desc')
             ->get();
 

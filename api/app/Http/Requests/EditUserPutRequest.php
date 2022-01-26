@@ -2,20 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditUserPutRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return false;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,8 +14,12 @@ class EditUserPutRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        return array_merge(User::RULES, [
+            'first_name' => 'sometimes|max:191',
+            'last_name' => 'sometimes|max:191',
+            'email' => 'sometimes|unique:users,email,' . $this->route('user')->id,
+            'role' => 'sometimes|exists:roles,name',
+            'password' => 'sometimes|min:8|confirmed',
+        ]);
     }
 }
