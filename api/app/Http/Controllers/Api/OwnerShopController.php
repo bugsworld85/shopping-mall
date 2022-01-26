@@ -11,8 +11,6 @@ use Illuminate\Http\Request;
 
 class OwnerShopController extends Controller
 {
-
-
     public function index(Request $request)
     {
         $shops = $request->user()->shops()->orderBy('name')->paginate(25);
