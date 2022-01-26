@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ShopPostRequest;
 use App\Http\Resources\DefaultResource;
 use App\Models\Shop;
+use App\Models\ShopVisit;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,15 @@ class ShopController extends Controller
 
         return (new DefaultResource($shop))->additional([
             'message' => __('shop.create.success')
+        ]);
+    }
+
+    public function triggerVisit(Shop $shop)
+    {
+        $shop->addVisit();
+
+        return response()->json([
+            'message' => 'Successfully saved shop visit.'
         ]);
     }
 }

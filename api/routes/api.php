@@ -25,17 +25,22 @@ Route::group([], function () {
     Route::post('register', [\App\Http\Controllers\Api\RegisterController::class, 'register'])->name('register.submit');
     Route::post('login', [\App\Http\Controllers\Api\LoginController::class, 'login'])->name('login.submit');
     Route::get('logout',);
+
+    Route::get('shop/{shop}/visit', [ShopController::class, 'triggerVisit'])->name('trigger.visit');
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
+    Route::group(['middleware' => ['allowed.role:super_admin']], function () {
+        Route::get('users', [UserController::class, 'index'])->name('users');
+        Route::post('user/create', [UserController::class, 'create'])->name('user.create');
+        Route::post('user/{user}', [UserController::class, 'edit'])->name('user.edit');
+    });
 
-    Route::get('users', [UserController::class, 'index'])->name('users');
-    Route::post('user/create', [UserController::class, 'create'])->name('user.create');
-    Route::post('user/{user}', [UserController::class, 'edit'])->name('user.edit');
-
-    Route::get('shops', [ShopController::class, 'index'])->name('shops');
-    Route::post('shop/create', [ShopController::class, 'create'])->name('shop.create');
+    Route::group(['middleware' => ['allowed.role:super_admin,mall_manager']], function () {
+        Route::get('shops', [ShopController::class, 'index'])->name('shops');
+        Route::post('shop/create', [ShopController::class, 'create'])->name('shop.create');
+    });
 
     Route::get('user/shops', [OwnerShopController::class, 'index'])->name('user.shops');
     Route::get('user/shop/active', [OwnerShopController::class, 'activeShop'])->name('user.shop.active');

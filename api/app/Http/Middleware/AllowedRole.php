@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Role;
+use App\Exceptions\NotAuthorizedException;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -15,9 +15,16 @@ class AllowedRole
      * @param \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, ...$role)
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        
-        return $next($request);
+        $userRoles = $request->user()->getRoleNames();
+
+        if ($userRoles->contains(function ($role) use ($roles) {
+            return collect($roles)->contains($role);
+        })) {
+            return $next($request);
+        }
+
+        throw new NotAuthorizedException();
     }
 }
