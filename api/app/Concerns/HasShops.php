@@ -20,4 +20,11 @@ trait HasShops
             'shop_id' => $shop->id,
         ]);
     }
+
+    public function isOwner(Shop $shop): bool
+    {
+        $shopUser = $this->shops()->firstWhere('shop_id', $shop->id);
+
+        return $shopUser != null;
+    }
 }

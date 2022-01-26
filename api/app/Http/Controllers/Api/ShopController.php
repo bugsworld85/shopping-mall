@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShopPostRequest;
+use App\Http\Requests\WithDateRangeRequest;
 use App\Http\Resources\DefaultResource;
 use App\Models\Shop;
 use App\Models\ShopVisit;
@@ -38,5 +39,14 @@ class ShopController extends Controller
         return response()->json([
             'message' => 'Successfully saved shop visit.'
         ]);
+    }
+
+    public function visitsPerShopReport(WithDateRangeRequest $request)
+    {
+        $perShopVisitsReport = Shop::GetVisitsPerShop($request)
+            ->orderByVisits($request->has('direction') ? $request->input('direction') : 'desc')
+            ->get();
+
+        return DefaultResource::collection($perShopVisitsReport);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\WithDateRangeRequest;
 use App\Http\Resources\DefaultResource;
 use App\Models\Shop;
 use App\Models\User;
@@ -34,8 +35,12 @@ class OwnerShopController extends Controller
 
     }
 
-    public function reports(Shop $shop)
+    public function visitsPerDayReport(WithDateRangeRequest $request, Shop $shop)
     {
+        $perDayShopVisits = $shop->getVisitsPerDay($request)
+            ->orderByDate($request->has('direction') ? $request->input('direction') : 'desc')
+            ->get();
 
+        return DefaultResource::collection($perDayShopVisits);
     }
 }

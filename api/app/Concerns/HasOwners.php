@@ -2,6 +2,7 @@
 
 namespace App\Concerns;
 
+use App\Models\Shop;
 use App\Models\ShopUser;
 use App\Models\User;
 

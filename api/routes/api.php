@@ -31,18 +31,24 @@ Route::group([], function () {
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
-    Route::group(['middleware' => ['allowed.role:super_admin']], function () {
-        Route::get('users', [UserController::class, 'index'])->name('users');
-        Route::post('user/create', [UserController::class, 'create'])->name('user.create');
-        Route::post('user/{user}', [UserController::class, 'edit'])->name('user.edit');
-    });
+    Route::group(['middleware' => ['only.json']], function () {
+        Route::group(['middleware' => ['allowed.role:super_admin']], function () {
+            Route::get('users', [UserController::class, 'index'])->name('users');
+            Route::post('user/create', [UserController::class, 'create'])->name('user.create');
+            Route::post('user/{user}', [UserController::class, 'edit'])->name('user.edit');
+        });
 
-    Route::group(['middleware' => ['allowed.role:super_admin,mall_manager']], function () {
-        Route::get('shops', [ShopController::class, 'index'])->name('shops');
-        Route::post('shop/create', [ShopController::class, 'create'])->name('shop.create');
-    });
+        Route::group(['middleware' => ['allowed.role:super_admin,mall_manager']], function () {
+            Route::get('shops', [ShopController::class, 'index'])->name('shops');
+            Route::post('shop/create', [ShopController::class, 'create'])->name('shop.create');
+            Route::get('shops/visits', [ShopController::class, 'visitsPerShopReport'])->name('shops.visits.report');
+        });
 
-    Route::get('user/shops', [OwnerShopController::class, 'index'])->name('user.shops');
-    Route::get('user/shop/active', [OwnerShopController::class, 'activeShop'])->name('user.shop.active');
-    Route::get('user/shop/{shop}/active', [OwnerShopController::class, 'makeShopActive'])->name('user.shop.make.active');
+        Route::group(['middleware' => ['allowed.role:store_owner', 'verify.owner']], function () {
+            Route::get('user/shops', [OwnerShopController::class, 'index'])->name('user.shops');
+            Route::get('user/shop/active', [OwnerShopController::class, 'activeShop'])->name('user.shop.active');
+            Route::get('user/shop/{shop}/active', [OwnerShopController::class, 'makeShopActive'])->name('user.shop.make.active');
+            Route::get('user/shop/{shop}/visits', [OwnerShopController::class, 'visitsPerDayReport'])->name('user.shop.visits.report.perday');
+        });
+    });
 });

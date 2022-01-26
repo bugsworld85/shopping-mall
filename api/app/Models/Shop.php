@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Concerns\HasOwners;
 use App\Concerns\ShopActions;
+use App\Concerns\ShopOwnerActions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Shop extends Model
 {
-    use HasFactory, HasOwners, ShopActions;
+    use HasFactory, HasOwners, ShopActions, ShopOwnerActions;
 
     protected $fillable = [
         'name', 'image'
@@ -27,7 +28,7 @@ class Shop extends Model
         );
     }
 
-    public function shopVisit()
+    public function shopVisits()
     {
         return $this->hasMany(ShopVisit::class);
     }
