@@ -6,7 +6,7 @@ use App\Exceptions\FailedLoginException;
 use App\Exceptions\UserNotVerifiedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginPostRequest;
-use App\Http\Resources\DefaultResource;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -26,11 +26,19 @@ class LoginController extends Controller
 
         $token = $user->createToken('API Token')->plainTextToken;
 
-        return (new DefaultResource([
+        return response()->json([
             'user' => $user,
-            'token' => $token
-        ]))->additional([
+            'token' => $token,
             'message' => __('user.login.success'),
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => __('auth.logout')
         ]);
     }
 }

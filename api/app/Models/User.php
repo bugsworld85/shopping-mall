@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use App\Concerns\RoleAssignment;
+use App\Concerns\HasShops;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, RoleAssignment;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasShops;
 
     /**
      * Had to do this for easy access.
@@ -61,35 +62,11 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(
             Shop::class,
-            RoleUser::class,
+            ShopUser::class,
             'user_id',
             'id',
             'id',
             'shop_id'
         );
-    }
-
-    public function roles()
-    {
-        return $this->hasManyThrough(
-            Role::class,
-            RoleUser::class,
-            'user_id',
-            'id',
-            'id',
-            'role_id'
-        );
-    }
-
-    public function userRoles()
-    {
-        return $this->hasMany(RoleUser::class)
-            ->addSelect([
-                'role_users.*',
-                'roles.code AS role_code',
-                'shops.name AS shop_name',
-            ])
-            ->leftJoin('roles', 'roles.id', '=', 'role_users.role_id')
-            ->leftJoin('shops', 'shops.id', '=', 'role_users.shop_id');
     }
 }

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\OwnerShopController;
+use App\Http\Controllers\Api\ShopController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,15 +24,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group([], function () {
     Route::post('register', [\App\Http\Controllers\Api\RegisterController::class, 'register'])->name('register.submit');
     Route::post('login', [\App\Http\Controllers\Api\LoginController::class, 'login'])->name('login.submit');
+    Route::get('logout',);
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
-    Route::get('shops', [\App\Http\Controllers\Api\ShopController::class, 'index'])->name('shops');
-    Route::post('shop/create', [\App\Http\Controllers\Api\ShopController::class, 'create'])->name('shop.create');
 
-    Route::group(['middleware' => ['verified.super_admin']], function () {
-        Route::get('users', [\App\Http\Controllers\Api\UserController::class, 'index'])->name('users');
-        Route::post('user/create', [\App\Http\Controllers\Api\UserController::class, 'create'])->name('user.create');
-        Route::post('user/{user}', [\App\Http\Controllers\Api\UserController::class, 'edit'])->name('user.edit');
-    });
+
+    Route::get('users', [UserController::class, 'index'])->name('users');
+    Route::post('user/create', [UserController::class, 'create'])->name('user.create');
+    Route::post('user/{user}', [UserController::class, 'edit'])->name('user.edit');
+
+    Route::get('shops', [ShopController::class, 'index'])->name('shops');
+    Route::post('shop/create', [ShopController::class, 'create'])->name('shop.create');
+
+    Route::get('user/shops', [OwnerShopController::class, 'index'])->name('user.shops');
+    Route::get('user/shop/active', [OwnerShopController::class, 'activeShop'])->name('user.shop.active');
+    Route::get('user/shop/{shop}/active', [OwnerShopController::class, 'makeShopActive'])->name('user.shop.make.active');
 });

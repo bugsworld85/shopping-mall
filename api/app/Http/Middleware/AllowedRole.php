@@ -2,10 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
 
-class VerifyHasCapability
+class AllowedRole
 {
     /**
      * Handle an incoming request.
@@ -14,12 +15,9 @@ class VerifyHasCapability
      * @param \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, ...$role)
     {
-        /**
-         * TODO:
-         * This middleware supposedly overrides role permissions in case a specific permission was assigned to a user.
-         */
+        
         return $next($request);
     }
 }

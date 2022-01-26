@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Permission;
 use App\Models\Role;
-use App\Models\RolePermission;
 use Illuminate\Database\Seeder;
 
 class RolePermissionSeeder extends Seeder
@@ -16,59 +15,45 @@ class RolePermissionSeeder extends Seeder
      */
     public function run()
     {
-        $assignment = [
-            Role::SUPER_ADMIN => [
-                Permission::CAN_CREATE_USER,
-                Permission::CAN_VIEW_USER,
-                Permission::CAN_EDIT_USER,
-                Permission::CAN_DELETE_USER,
+        $roles = [
+            'super_admin' => [
+                'can_create_user',
+                'can_view_user',
+                'can_edit_user',
+                'can_delete_user',
+                'can_create_shop',
+                'can_edit_shop',
+                'can_view_shop',
+                'can_delete_shop',
             ],
-            Role::MALL_MANAGER => [
-                Permission::CAN_VIEW_COMBINED_REPORTS,
-                Permission::CAN_VIEW_REPORTS
+            'mall_manager' => [
+                'can_view_combined_reports',
+                'can_create_shop',
+                'can_edit_shop',
+                'can_view_shop',
+                'can_delete_shop',
             ],
-            Role::STORE_OWNER => [
-                Permission::CAN_VIEW_REPORTS,
+            'store_owner' => [
+                'can_view_store_reports',
             ]
         ];
 
-        $permissions = (new \ReflectionClass(Permission::class))->getConstants();
-
-        unset($permissions['CREATED_AT']);
-        unset($permissions['UPDATED_AT']);
-
-        foreach ($permissions as $permission) {
-            Permission::updateOrCreate([
-                'code' => $permission,
-            ], [
-                'name' => ucwords(str_replace('_', ' ', $permission))
-            ]);
-        }
-
-        $permissions = Permission::all();
-
-        foreach ($assignment as $role => $defaultPermissions) {
-            $roleModel = Role::updateOrCreate([
-                'code' => $role,
-            ], [
-                'name' => ucwords(str_replace('_', ' ', $role))
-            ]);
-
-            foreach ($defaultPermissions as $defaultPermission) {
-                /**
-                 * Making sure no overlapping of permissions within a role.
-                 */
-                RolePermission::where('role_id', $roleModel->id)->delete();
-
-                $permission = $permissions->firstWhere('code', $defaultPermission);
-
-                if ($permission != null) {
-                    $rolePermission = new RolePermission();
-                    $rolePermission->role_id = $roleModel->id;
-                    $rolePermission->permission_id = $permission->id;
-                    $rolePermission->save();
-                }
+        collect($roles)->each(function ($permissions, $role) {
+            try {
+                $role = Role::create(['name' => $role]);
+                $this->command->info($role->name);
+            } catch (\Throwable $e) {
+                $this->command->warn($e->getMessage());
             }
-        }
+            collect($permissions)->each(function ($permission) use ($role) {
+                try {
+                    $permission = Permission::create(['name' => $permission]);
+                    $this->command->comment($permission->name);
+                    $role->givePermissionTo($permission);
+                } catch (\Throwable $e) {
+                    $this->command->warn($e->getMessage());
+                }
+            });
+        });
     }
 }

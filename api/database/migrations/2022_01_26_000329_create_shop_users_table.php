@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRoleUsersTable extends Migration
+class CreateShopUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreateRoleUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('role_users', function (Blueprint $table) {
+        Schema::create('shop_users', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->index()->unsigned();
-            $table->bigInteger('role_id')->index()->unsigned();
-            $table->bigInteger('shop_id')->nullable()->index()->unsigned();
+            $table->bigInteger('shop_id')->index()->unsigned();
+            $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
         });
     }
@@ -32,6 +31,6 @@ class CreateRoleUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role_users');
+        Schema::dropIfExists('shop_users');
     }
 }

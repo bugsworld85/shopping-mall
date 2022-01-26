@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Role;
+use App\Models\Shop;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -41,8 +43,15 @@ class UserFactory extends Factory
 
     public function configure()
     {
-        return $this->afterCreating(function (User $user) {
-            $user->assignRole(Role::STORE_OWNER);
+        $shops = Shop::all();
+        $roles = Role::all();
+
+        return $this->afterCreating(function (User $user) use ($shops, $roles) {
+            $shop = $shops->random();
+            $role = $roles->random();
+
+            $user->assignRole($role->name);
+            $user->assignShop($shop);
         });
     }
 }

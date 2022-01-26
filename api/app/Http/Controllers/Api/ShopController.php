@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ShopPostRequest;
 use App\Http\Resources\DefaultResource;
 use App\Models\Shop;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +14,10 @@ class ShopController extends Controller
 {
     public function index()
     {
-        return DefaultResource::collection([]);
+        $shops = Shop::orderBy('name', 'ASC')
+            ->paginate(25);
+
+        return DefaultResource::collection($shops);
     }
 
     public function create(ShopPostRequest $request)

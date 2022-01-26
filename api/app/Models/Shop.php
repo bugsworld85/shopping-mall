@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Concerns\HasOwners;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Shop extends Model
 {
-    use HasFactory;
+    use HasFactory, HasOwners;
 
     protected $fillable = [
         'name', 'image'
@@ -17,7 +18,7 @@ class Shop extends Model
     {
         return $this->hasManyThrough(
             User::class,
-            RoleUser::class,
+            ShopUser::class,
             'shop_id',
             'id',
             'id',
