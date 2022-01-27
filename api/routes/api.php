@@ -33,6 +33,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::group(['middleware' => ['only.json']], function () {
 
+        Route::get('roles', [\App\Http\Controllers\Api\RoleController::class, 'index'])->name('roles');
 
         Route::group(['middleware' => ['allowed.role:super_admin']], function () {
 
