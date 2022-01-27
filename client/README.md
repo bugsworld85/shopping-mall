@@ -1,4 +1,4 @@
-# mall-client
+# client
 
 ## Build Setup
 
