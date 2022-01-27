@@ -24,6 +24,8 @@ class LoginController extends Controller
 //            throw new UserNotVerifiedException();
         }
 
+        $user->load(['shops', 'roles']);
+
         $token = $user->createToken('API Token')->plainTextToken;
 
         return response()->json([

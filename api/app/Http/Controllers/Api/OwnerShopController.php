@@ -39,7 +39,7 @@ class OwnerShopController extends Controller
         $dateRange = new DateRangeCarbonBuilder($request->input('start'), $request->input('end'));
         $dateRange->build();
 
-        $perDayShopVisits = $shop->getVisitsPerDay($request)
+        $perDayShopVisits = $shop->getVisitsPerDay($dateRange)
             ->orderByDate($request->has('direction') ? $request->input('direction') : 'desc')
             ->get();
 
