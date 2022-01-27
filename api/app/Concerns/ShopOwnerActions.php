@@ -14,18 +14,11 @@ trait ShopOwnerActions
      * Get visits per day on a single shop.
      * Default to 1 month worth of data.
      * @param $q
-     * @param WithDateRangeRequest|null $request
+     * @param DateRangeCarbonBuilder $dateRange
      * @return Builder
      */
-    public function scopeGetVisitsPerDay($q, WithDateRangeRequest $request = null, Shop $shop = null): Builder
+    public function scopeGetVisitsPerDay($q, DateRangeCarbonBuilder $dateRange): Builder
     {
-        if ($request) {
-            $dateRange = new DateRangeCarbonBuilder($request->input('start'), $request->input('end'));
-        } else {
-            $dateRange = new DateRangeCarbonBuilder();
-        }
-        $dateRange->build();
-
         return $q->select([
             'shops.id', 'shops.name',
             DB::raw("DATE(shop_visits.created_at) AS visit_date"),

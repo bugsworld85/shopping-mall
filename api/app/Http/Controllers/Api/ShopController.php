@@ -9,6 +9,7 @@ use App\Http\Resources\DefaultResource;
 use App\Models\Shop;
 use App\Models\ShopVisit;
 use App\Models\User;
+use App\Services\Personal\DateRangeCarbonBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,7 +44,10 @@ class ShopController extends Controller
 
     public function visitsPerShopReport(WithDateRangeRequest $request)
     {
-        $perShopVisitsReport = Shop::getVisitsPerShop($request)
+        $dateRange = new DateRangeCarbonBuilder($request->input('start'), $request->input('end'));
+        $dateRange->build();
+
+        $perShopVisitsReport = Shop::getVisitsPerShop($dateRange)
             ->orderByVisits($request->has('direction') ? $request->input('direction') : 'desc')
             ->get();
 
@@ -52,6 +56,7 @@ class ShopController extends Controller
                 'total' => $perShopVisitsReport->reduce(function ($total, $shop) {
                     return $total + $shop->visits;
                 }, 0),
+                'date_range' => $dateRange
             ]
         ]);
     }

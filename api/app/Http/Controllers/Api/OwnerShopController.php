@@ -7,6 +7,7 @@ use App\Http\Requests\WithDateRangeRequest;
 use App\Http\Resources\DefaultResource;
 use App\Models\Shop;
 use App\Models\User;
+use App\Services\Personal\DateRangeCarbonBuilder;
 use Illuminate\Http\Request;
 
 class OwnerShopController extends Controller
@@ -35,10 +36,20 @@ class OwnerShopController extends Controller
 
     public function visitsPerDayReport(WithDateRangeRequest $request, Shop $shop)
     {
+        $dateRange = new DateRangeCarbonBuilder($request->input('start'), $request->input('end'));
+        $dateRange->build();
+
         $perDayShopVisits = $shop->getVisitsPerDay($request)
             ->orderByDate($request->has('direction') ? $request->input('direction') : 'desc')
             ->get();
 
-        return DefaultResource::collection($perDayShopVisits);
+        return DefaultResource::collection($perDayShopVisits)->additional([
+            'meta' => [
+                'total' => $perDayShopVisits->reduce(function ($total, $shop) {
+                    return $total + $shop->visits;
+                }, 0),
+                'date_range' => $dateRange
+            ]
+        ]);
     }
 }

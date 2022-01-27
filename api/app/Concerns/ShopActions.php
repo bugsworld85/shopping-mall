@@ -24,14 +24,11 @@ trait ShopActions
     /**
      * Get visits per shop on all shops.
      * @param $q
-     * @param WithDateRangeRequest|null $request
+     * @param DateRangeCarbonBuilder $dateRange
      * @return Builder
      */
-    public function scopeGetVisitsPerShop($q, WithDateRangeRequest $request = null): Builder
+    public function scopeGetVisitsPerShop($q, DateRangeCarbonBuilder $dateRange): Builder
     {
-        $dateRange = new DateRangeCarbonBuilder($request->input('start'), $request->input('end'));
-        $dateRange->build();
-
         return $q->select([
             'shops.id', 'shops.name',
             DB::raw("COUNT(shop_visits.shop_id) AS visits"),
