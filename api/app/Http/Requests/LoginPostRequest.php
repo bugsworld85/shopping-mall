@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Exceptions\FailedLoginException;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginPostRequest extends FormRequest
@@ -27,5 +29,10 @@ class LoginPostRequest extends FormRequest
             'email' => 'required|email',
             'password' => 'required',
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new FailedLoginException();
     }
 }
