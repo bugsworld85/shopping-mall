@@ -47,6 +47,12 @@ class ShopController extends Controller
             ->orderByVisits($request->has('direction') ? $request->input('direction') : 'desc')
             ->get();
 
-        return DefaultResource::collection($perShopVisitsReport);
+        return DefaultResource::collection($perShopVisitsReport)->additional([
+            'meta' => [
+                'total' => $perShopVisitsReport->reduce(function ($total, $shop) {
+                    return $total + $shop->visits;
+                }, 0),
+            ]
+        ]);
     }
 }
