@@ -4,6 +4,7 @@ export const state = () => ({
     roles: [],
     loginUser: null,
     currentShop: null,
+    userShopReport: [],
 });
 
 export const getters = {
@@ -27,6 +28,7 @@ export const getters = {
         return false;
     },
     loginUserShops: ({ loginUser }) => {
+        console.log(loginUser);
         if (loginUser) {
             return loginUser.shops;
         }
@@ -60,6 +62,15 @@ export const actions = {
     async fetchUserShops({ commit }) {
         commit("SET_USER_SHOPS");
     },
+    async fetchUserShopReport({ commit }, params) {
+        await this.$api
+            .get(`/api/user/shop/${shop_id}/visits`, {
+                params,
+            })
+            .then((response) => {
+                commit("SET_USER_SHOP_REPORT", response.data.data);
+            });
+    },
 };
 
 export const mutations = {
@@ -79,5 +90,8 @@ export const mutations = {
         if (state.loginUser) {
             state.shops = state.loginUser.shops;
         }
+    },
+    SET_USER_SHOP_REPORT: (state, payload) => {
+        state.userShopReport = payload;
     },
 };

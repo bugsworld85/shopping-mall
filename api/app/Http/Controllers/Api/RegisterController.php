@@ -26,7 +26,7 @@ class RegisterController extends Controller
         ]));
         $shop->save();
 
-        $user->assignRole(Role::STORE_OWNER, $shop);
+        $user->assignRole('store_owner');
 
         return (new DefaultResource($user))->additional([
             'message' => __('user.register.success')

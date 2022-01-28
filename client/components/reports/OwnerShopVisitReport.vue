@@ -71,7 +71,8 @@ export default {
         },
     },
     mounted() {
-        this.pullReport();
+        // this.pullReport();
+        this.$store.dispatch("fetchUserShopReport");
     },
     methods: {
         handleApplyRange(dateRange) {
